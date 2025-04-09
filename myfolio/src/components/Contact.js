@@ -16,12 +16,9 @@ function Contact () {
       const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5050/api/contact', formData, {
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                withCredentials: true
-            });
+            await axios.post('https://portfolio-backend-m9il.onrender.com/api/contact', formData, {
+                headers: { 'Content-Type': 'application/json' }
+            });              
           alert('Message sent successfully!');
           setFormData({ name: '', email: '', message: '' });
         } catch (error) {
