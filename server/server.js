@@ -1,61 +1,60 @@
-// Load environment variables
-require('dotenv').config();
 const express = require('express');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
 const cors = require('cors');
-const admin = require('firebase-admin');
+const helmet = require('helmet');
 
-// Parse the Firebase service account from the env
-const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
-
-serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
-
-// Initialize Firebase Admin SDK
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
-
-// Firestore reference
-const db = admin.firestore();
-
-// Initialize Express
+dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 5000;
+
+app.use(helmet());
+
+console.log('✅ Starting server...');
+
+// ✅ Logging middleware for request tracking
+app.use((req, res, next) => {
+    console.log(`📩 ${req.method} request received on ${req.url}`);
+    next();
+  });
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST', 'OPTIONS'],
+    credentials: true,
+}));
+
+// ✅ Preflight request handler
+app.options('*', cors());
+  
 app.use(express.json());
 
-// Test route
-app.get('/', (req, res) => {
-  res.send('Backend is running!');
+console.log('✅ Registering routes...');
+
+app.get('/test', (req, res) => {
+    res.send('✅ Test route works');
+});  
+
+// Routes
+const contactRoutes = require('./routes/contactRoutes');
+app.use('/api', contactRoutes); // 
+
+// 404 Not Found Handler
+app.use((req, res) => {
+    res.status(404).json({ success: false, message: 'Route not found' });
+});
+  
+app.use((err, req, res, next) => {
+    console.error('🔥 Error:', err.stack);
+    res.status(err.status || 500).json({ success: false, message: err.message || 'Server error' });
 });
 
-// Contact form handler
-app.post('/api/contact', async (req, res) => {
-  try {
-    const { name, email, message } = req.body;
-
-    if (!name || !email || !message) {
-      return res.status(400).json({ error: 'All fields are required' });
-    }
-
-    const contactData = {
-      name,
-      email,
-      message,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    };
-
-    await db.collection('contacts').add(contactData);
-
-    res.status(200).json({ message: 'Message sent successfully!' });
-  } catch (error) {
-    console.error('Error saving contact data:', error);
-    res.status(500).json({ error: 'Failed to save message' });
-  }
-});
-
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+  // DB + Server
+mongoose.connect(process.env.MONGO_URI)
+.then(() => {
+  console.log('✅ MongoDB connected');
+  app.listen(process.env.PORT || 5050, () =>
+    console.log(`🚀 Server running on port ${process.env.PORT || 5050}`)
+  );
+})
+.catch(err => console.error('❌ MongoDB connection error:', err));
