@@ -1,0 +1,19 @@
+{
+    "projects": [],
+    "builds": [
+      {
+        "src": "myfolio/package.json",
+        "use": "@vercel/static-build",
+        "config": {
+          "distDir": "myfolio/build"
+        }
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "/myfolio/$1"
+      }
+    ]
+  }
+  
