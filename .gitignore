@@ -1,0 +1,7 @@
+# Node backend
+server/node_modules/
+server/.env
+
+# React frontend
+myfolio/node_modules/
+myfolio/.env
