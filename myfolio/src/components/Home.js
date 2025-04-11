@@ -1,17 +1,25 @@
 import React from 'react';
 import axios from 'axios';
 import { Github, Linkedin, Twitter, Instagram, } from 'lucide-react';
-import TextLoop from 'react-text-loop';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 
 function Home() {
     const phrases = [
-        { text: 'web applications', color: '#FF5733' },
-        { text: 'optimal experience', color: '#33FF57' },
-        { text: 'user-friendly products', color: '#3357FF' },
-      ];
+      { text: 'web applications', color: '#FF5733' },
+      { text: 'optimal experience', color: '#33FF57' },
+      { text: 'user-friendly products', color: '#3357FF' },
+    ];
 
+    const [index, setIndex] = React.useState(0);
+      React.useEffect(() => {
+        const interval = setInterval(() => {
+          setIndex(prev => (prev + 1) % phrases.length);
+        }, 2500); // every 2.5s
+        return () => clearInterval(interval);
+      }, 
+    []);
       
     const tools = [
       {
@@ -152,24 +160,23 @@ function Home() {
                         <div className='col-12 col-md-9 description'>
                             <h2>Welcome to MyFolio</h2>
                             <p className="mb-5" style={{ color: 'white' }}>
-                                Passionate about creating beautiful{' '}
-                                <TextLoop
-                                    interval={3000}
-                                    springConfig={{ stiffness: 180, damping: 10 }}
-                                >
-                                    {phrases.map((phrase, index) => (
-                                    <span
-                                        key={index}
-                                        style={{
-                                        color: phrase.color,
-                                        fontWeight: 'bold',
-                                        animation: 'fadeInOutDown 3s ease-in-out infinite',
-                                        }}
-                                    >
-                                        {phrase.text}
-                                    </span>
-                                    ))}
-                                </TextLoop>
+                              Passionate about creating beautiful{' '}
+                                <AnimatePresence mode="wait">
+                                  <motion.span
+                                    key={phrases[index].text}
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -10 }}
+                                    transition={{ duration: 0.5 }}
+                                    style={{
+                                      color: phrases[index].color,
+                                      fontWeight: 'bold',
+                                      marginLeft: '0.4rem',
+                                    }}
+                                  >
+                                    {phrases[index].text}
+                                  </motion.span>
+                                </AnimatePresence>
                             </p>
                             <Link to="/contact" className="btn btn-lg hire">
                               Hire Me
