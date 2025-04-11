@@ -7,13 +7,13 @@ function Contact () {
         name: '',
         email: '',
         message: '',
-      });
+    });
     
-      const handleChange = (e) => {
+    const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
-      };
+    };
     
-      const handleSubmit = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             await axios.post(`${process.env.REACT_APP_API_URL}/api/contact`, formData, {
@@ -25,7 +25,7 @@ function Contact () {
           console.error('❌ Error from backend:', error.response?.data || error.message);
           alert('An error occurred while sending the message.');
         }
-      };
+    };
       
 
     return(

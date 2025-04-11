@@ -85,27 +85,29 @@ function Home() {
     ];
 
     
-    const [formData, setFormData] = React.useState({
-        name: '',
-        email: '',
-        message: '',
-      });
-    
-      const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-      };
-    
-      const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-          await axios.post('http://localhost:5000/api/contact', formData);
-          alert('Message sent successfully!');
-          setFormData({ name: '', email: '', message: '' });
-        } catch (error) {
-          console.error(error);
-          alert('An error occurred while sending the message.');
-        }
-      };
+  const [formData, setFormData] = React.useState({
+      name: '',
+      email: '',
+      message: '',
+  });
+  
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+  
+  const handleSubmit = async (e) => {
+      e.preventDefault();
+      try {
+          await axios.post(`${process.env.REACT_APP_API_URL}/api/contact`, formData, {
+              headers: { 'Content-Type': 'application/json' },
+          });                            
+        alert('Message sent successfully!');
+        setFormData({ name: '', email: '', message: '' });
+      } catch (error) {
+        console.error('❌ Error from backend:', error.response?.data || error.message);
+        alert('An error occurred while sending the message.');
+      }
+  };
 
       const services = [
         {
