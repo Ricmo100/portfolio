@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const helmet = require('helmet');
+const allowedOrigins = ['http://localhost:3000', 'https://myfolio-ten.vercel.app'];
 
 dotenv.config();
 const app = express();
@@ -19,11 +20,13 @@ app.use((req, res, next) => {
 
 // Middleware
 app.use(cors({
-    origin: [
-      'http://localhost:3000',
-      'https://myfolio-da439bn45-myfolio-portfolio.vercel.app',
-      'https://myfolio.vercel.app', // Add any other custom domain if applicable
-    ],
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     methods: ['GET', 'POST', 'OPTIONS'],
     credentials: true,
 }));
