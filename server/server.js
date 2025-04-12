@@ -19,7 +19,11 @@ app.use((req, res, next) => {
 
 // Middleware
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: [
+      'http://localhost:3000',
+      'https://myfolio-da439bn45-myfolio-portfolio.vercel.app',
+      'https://myfolio.vercel.app', // Add any other custom domain if applicable
+    ],
     methods: ['GET', 'POST', 'OPTIONS'],
     credentials: true,
 }));
