@@ -20,7 +20,13 @@ app.use((req, res, next) => {
 
 // Middleware
 app.use(cors({
-    origin: ['http://localhost:3000', 'https://myfolio-ten.vercel.app'],
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     methods: ['GET', 'POST', 'OPTIONS'],
     credentials: true,
 }));
